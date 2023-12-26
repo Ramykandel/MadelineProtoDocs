@@ -17,7 +17,7 @@ Get preview of webpage
 
 | Name     |    Type       | Description | Required |
 |----------|---------------|-------------|----------|
-|message|[string](/API_docs/types/string.html) | Message from which to extract the preview | Yes|
+|message|[string](/API_docs/types/string.html) | Message from which to extract the preview | Optional|
 |entities|Array of [MessageEntity](/API_docs/types/MessageEntity.html) | [Message entities for styled text](https://core.telegram.org/api/entities) | Optional|
 |parse\_mode| [string](/API_docs/types/string.html) | Whether to parse HTML or Markdown markup in the message| Optional |
 
@@ -53,7 +53,7 @@ If the length of the provided message is bigger than 4096, the message will be s
 
 Set parse_mode to html to enable HTML parsing of the message.  
 
-Set parse_mode to Markdown to enable markown AND html parsing of the message.  
+Set parse_mode to Markdown to enable markdown parsing of the message.  
 
 The following tags are currently supported:
 

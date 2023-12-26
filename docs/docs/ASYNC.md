@@ -103,18 +103,6 @@ See [async forking](#async-forking-does-async-green-thread-forking).
 
 There are AMPHP methods can be used to execute multiple async operations simultaneously and wait for the result of all of them, see the [amphp docs](https://amphp.org/amp#combinators) for more info.  
 
-### Handling timeouts
-
-These methods can be used to wait for a certain amount of time for a result, and then throw an `Amp\TimeoutException` or simply continue execution if no result was obtained.  
-
-```php
-// Waits for the result for 2 seconds and then throws an \Amp\TimeoutException
-$result = $MadelineProto->timeout($promise, 2)
-
-// Waits for the result for 2 seconds, returns the result or null (which is the result of sleep())
-$result = $MadelineProto->first([$promise, $MadelineProto->sleep(2)]);
-```
-
 ## MadelineProto and AMPHP async APIs
 
 MadelineProto and AMPHP (through Revolt) both provide a lot of async functions: all of MadelineProto's functions are async, for example; and AMPHP provides [multiple packages](https://amphp.org/packages) to work asynchronously with HTTP requests, websockets, databases (HTTP, MySQL, redis, postgres, DNS, sockets and [much more](https://github.com/amphp/))!  
@@ -182,31 +170,31 @@ $future = \Amp\async(fn () => $MadelineProto->messages->sendMessage(peer: 'danog
 
 #### Multiple async
 
-When starting [multiple concurrent requests using `\Amp\async`](#async-forking-does-async-green-thread-forking), the `postpone` flag may also be used postpone execution of all methods until the first method call with `postpone = false` to the same DC or a call to flush() is made, bundling all queued in a single container for higher efficiency.
+Multiple concurrent requests can be started [using `\Amp\async`](#async-forking-does-async-green-thread-forking), this will queue bundle all requests in a single container for higher efficiency, if there are no method calls inbetween the `async` calls.
 
 ```php
-$res1 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 1', postpone: true));
-$res2 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 2', postpone: true));
-$res3 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 3', postpone: false));
+$res1 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 1'));
+$res2 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 2'));
+$res3 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 3'));
 
+// The await will send all 3 methods in a single container: ['hi 1', 'hi 2', 'hi 3']
 [$res1, $res2, $res3] = await([$res1, $res2, $res3]);
-```
 
-Or
+$res1 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 1'));
 
-```php
-$res1 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 1', postpone: true));
-$res2 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 2', postpone: true));
-$res3 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 3', postpone: true));
+// This non-async call will send request hi 1 and hi 2 direct in a single container: ['hi 1', 'hi 2 direct']
+$MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 2 direct');
 
-$this->flush();
+$res2 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 2'));
+$res3 = async(fn () => $MadelineProto->messages->sendMessage(peer: '@danogentili', message: 'hi 3'));
 
+// The await will send the remaining 2 calls in two container: ['hi 2', 'hi 3']
 [$res1, $res2, $res3] = await([$res1, $res2, $res3]);
 ```
 
 This is the preferred way of combining multiple method calls: this way, the MadelineProto async WriteLoop will combine all method calls in one container, making everything WAY faster.  
 
-Note that the execution order of method calls is not guaranteed by default.  
+Note that the execution order of method calls is not guaranteed in this case, unless a `queueId` argument is also provided, in which case it will be guaranteed to be equal to the queueing order (each method call is queued by the `async` call).  
 
 #### Cancellation
 

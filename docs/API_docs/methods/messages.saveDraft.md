@@ -21,7 +21,7 @@ Save a message [draft](https://core.telegram.org/api/drafts) associated to a cha
 |invert\_media|[Bool](/API_docs/types/Bool.html) |  | Optional|
 |reply\_to|[InputReplyTo](/API_docs/types/InputReplyTo.html) |  | Optional|
 |peer|[Username, chat ID, Update, Message or InputPeer](/API_docs/types/InputPeer.html) | Destination of the message that should be sent | Optional|
-|message|[string](/API_docs/types/string.html) | The draft | Yes|
+|message|[string](/API_docs/types/string.html) | The draft | Optional|
 |entities|Array of [MessageEntity](/API_docs/types/MessageEntity.html) | Message [entities](https://core.telegram.org/api/entities) for styled text | Optional|
 |parse\_mode| [string](/API_docs/types/string.html) | Whether to parse HTML or Markdown markup in the message| Optional |
 |media|[MessageMedia, Update, Message or InputMedia](/API_docs/types/InputMedia.html) |  | Optional|
@@ -58,7 +58,7 @@ If the length of the provided message is bigger than 4096, the message will be s
 
 Set parse_mode to html to enable HTML parsing of the message.  
 
-Set parse_mode to Markdown to enable markown AND html parsing of the message.  
+Set parse_mode to Markdown to enable markdown parsing of the message.  
 
 The following tags are currently supported:
 

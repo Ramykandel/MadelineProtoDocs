@@ -386,8 +386,6 @@ image: https://docs.madelineproto.xyz/favicons/android-chrome-256x256.png
 
 * <a href="account.finishTakeoutSession.html" name="account.finishTakeoutSession">Finish account takeout session: account.finishTakeoutSession</a>
 
-* <a href="https://docs.madelineproto.xyz/PHP/danog/MadelineProto/API.html#flush-void" name="flush">Flush all postponed messages: flush</a>
-
 * <a href="https://docs.madelineproto.xyz/PHP/danog/MadelineProto/API.html#callfork-generator-amp-future-callable-callable-mixed-args-amp-future-t" name="callFork">Fork a new green thread and execute the passed function in the background: callFork</a>
 
 * <a href="https://docs.madelineproto.xyz/PHP/danog/MadelineProto/API.html#broadcastforwardmessages-mixed-from_peer-list-int-message_ids-bool-drop_author-false-danog-madelineproto-broadcast-filter-filter-null-bool-pin-false-int" name="broadcastForwardMessages">Forwards a list of messages to all peers (users, chats, channels) of the bot: broadcastForwardMessages</a>
@@ -472,9 +470,9 @@ image: https://docs.madelineproto.xyz/favicons/android-chrome-256x256.png
 
 * <a href="messages.getEmojiKeywordsDifference.html" name="messages.getEmojiKeywordsDifference">Get changed emoji keywords »: messages.getEmojiKeywordsDifference</a>
 
-* <a href="help.getAppChangelog.html" name="help.getAppChangelog">Get changelog of current app.  : help.getAppChangelog</a>
-
 * <a href="stats.getBroadcastStats.html" name="stats.getBroadcastStats">Get channel statistics: stats.getBroadcastStats</a>
+
+* <a href="channels.getMessages.html" name="channels.getMessages">Get channel/supergroup messages: channels.getMessages</a>
 
 * <a href="channels.getAdminedPublicChannels.html" name="channels.getAdminedPublicChannels">Get channels/supergroups/geogroups we're admin in. Usually called when the user exceeds the limit for owned public channels/supergroups/geogroups, and the user is given the choice to remove one of his channels/supergroups/geogroups: channels.getAdminedPublicChannels</a>
 
@@ -521,8 +519,6 @@ image: https://docs.madelineproto.xyz/favicons/android-chrome-256x256.png
 * <a href="messages.getFeaturedStickers.html" name="messages.getFeaturedStickers">Get featured stickers: messages.getFeaturedStickers</a>
 
 * <a href="https://docs.madelineproto.xyz/PHP/danog/MadelineProto/API.html#end-t-what-t" name="end">Get final element of array: end</a>
-
-* <a href="https://docs.madelineproto.xyz/PHP/danog/MadelineProto/API.html#getfolderid-mixed-id-int" name="getFolderId">Get folder ID from object: getFolderId</a>
 
 * <a href="messages.getDialogFilters.html" name="messages.getDialogFilters">Get folders: messages.getDialogFilters</a>
 
@@ -936,12 +932,6 @@ image: https://docs.madelineproto.xyz/favicons/android-chrome-256x256.png
 
 * <a href="https://docs.madelineproto.xyz/PHP/danog/MadelineProto/API.html#callplayonhold-int-id-danog-madelineproto-localfile-danog-madelineproto-remoteurl-amp-bytestream-readablestream-files-void" name="callPlayOnHold">Play files on hold in call: callPlayOnHold</a>
 
-* <a href="channels.getMessages.html" name="channels.getMessages">Please use the event handler: channels.getMessages</a>
-
-* <a href="messages.getHistory.html" name="messages.getHistory">Please use the event handler: messages.getHistory</a>
-
-* <a href="messages.getMessages.html" name="messages.getMessages">Please use the event handler: messages.getMessages</a>
-
 * <a href="https://docs.madelineproto.xyz/PHP/danog/MadelineProto/API.html#posmod-int-a-int-b-int" name="posmod">Positive modulo: posmod</a>
 
 * <a href="messages.getBotCallbackAnswer.html" name="messages.getBotCallbackAnswer">Press an inline callback button and get a callback answer from the bot: messages.getBotCallbackAnswer</a>
@@ -1076,6 +1066,8 @@ image: https://docs.madelineproto.xyz/favicons/android-chrome-256x256.png
 
 * <a href="messages.getSearchResultsPositions.html" name="messages.getSearchResultsPositions">Returns sparse positions of messages of the specified type in the chat to be used for shared media scroll implementation: messages.getSearchResultsPositions</a>
 
+* <a href="messages.getHistory.html" name="messages.getHistory">Returns the conversation history with one interlocutor / within a chat: messages.getHistory</a>
+
 * <a href="messages.getDialogs.html" name="messages.getDialogs">Returns the current user dialog list: messages.getDialogs</a>
 
 * <a href="contacts.getContacts.html" name="contacts.getContacts">Returns the current user's contact list: contacts.getContacts</a>
@@ -1083,6 +1075,8 @@ image: https://docs.madelineproto.xyz/favicons/android-chrome-256x256.png
 * <a href="contacts.getBlocked.html" name="contacts.getBlocked">Returns the list of blocked users: contacts.getBlocked</a>
 
 * <a href="contacts.getStatuses.html" name="contacts.getStatuses">Returns the list of contact statuses: contacts.getStatuses</a>
+
+* <a href="messages.getMessages.html" name="messages.getMessages">Returns the list of messages by their IDs: messages.getMessages</a>
 
 * <a href="photos.getUserPhotos.html" name="photos.getUserPhotos">Returns the list of user photos: photos.getUserPhotos</a>
 
@@ -1436,6 +1430,10 @@ image: https://docs.madelineproto.xyz/favicons/android-chrome-256x256.png
 
 * <a href="account.updatePasswordSettings.html" name="account.updatePasswordSettings">You cannot use this method directly; use $MadelineProto->update2fa($params), instead (see https://docs.madelineproto.xyz for more info): account.updatePasswordSettings</a>
 
+* <a href="account.getChannelDefaultEmojiStatuses.html" name="account.getChannelDefaultEmojiStatuses">account.getChannelDefaultEmojiStatuses</a>
+
+* <a href="account.getChannelRestrictedStatusEmojis.html" name="account.getChannelRestrictedStatusEmojis">account.getChannelRestrictedStatusEmojis</a>
+
 * <a href="account.getDefaultBackgroundEmojis.html" name="account.getDefaultBackgroundEmojis">account.getDefaultBackgroundEmojis</a>
 
 * <a href="account.invalidateSignInCodes.html" name="account.invalidateSignInCodes">account.invalidateSignInCodes</a>
@@ -1457,6 +1455,8 @@ image: https://docs.madelineproto.xyz/favicons/android-chrome-256x256.png
 * <a href="channels.toggleViewForumAsMessages.html" name="channels.toggleViewForumAsMessages">channels.toggleViewForumAsMessages</a>
 
 * <a href="channels.updateColor.html" name="channels.updateColor">channels.updateColor</a>
+
+* <a href="channels.updateEmojiStatus.html" name="channels.updateEmojiStatus">channels.updateEmojiStatus</a>
 
 * <a href="contacts.editCloseFriends.html" name="contacts.editCloseFriends">contacts.editCloseFriends</a>
 
@@ -1523,6 +1523,8 @@ image: https://docs.madelineproto.xyz/favicons/android-chrome-256x256.png
 * <a href="stories.getStoriesByID.html" name="stories.getStoriesByID">stories.getStoriesByID</a>
 
 * <a href="stories.getStoriesViews.html" name="stories.getStoriesViews">stories.getStoriesViews</a>
+
+* <a href="stories.getStoryReactionsList.html" name="stories.getStoryReactionsList">stories.getStoryReactionsList</a>
 
 * <a href="stories.getStoryViewsList.html" name="stories.getStoryViewsList">stories.getStoryViewsList</a>
 

@@ -18,7 +18,7 @@ Internal use
 | Name     |    Type       | Description | Required |
 |----------|---------------|-------------|----------|
 |user\_id|[Username, chat ID, Update, Message or InputUser](/API_docs/types/InputUser.html) | User | Optional|
-|message|[string](/API_docs/types/string.html) | Message | Yes|
+|message|[string](/API_docs/types/string.html) | Message | Optional|
 |entities|Array of [MessageEntity](/API_docs/types/MessageEntity.html) | [Message entities for styled text](https://core.telegram.org/api/entities) | Yes|
 |parse\_mode| [string](/API_docs/types/string.html) | Whether to parse HTML or Markdown markup in the message| Optional |
 
@@ -54,7 +54,7 @@ If the length of the provided message is bigger than 4096, the message will be s
 
 Set parse_mode to html to enable HTML parsing of the message.  
 
-Set parse_mode to Markdown to enable markown AND html parsing of the message.  
+Set parse_mode to Markdown to enable markdown parsing of the message.  
 
 The following tags are currently supported:
 

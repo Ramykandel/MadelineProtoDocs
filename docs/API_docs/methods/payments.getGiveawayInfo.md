@@ -16,12 +16,12 @@ redirect_from: /API_docs/methods/payments_getGiveawayInfo.html
 | Name     |    Type       | Required |
 |----------|---------------|----------|
 |peer|[Username, chat ID, Update, Message or InputPeer](/API_docs/types/InputPeer.html) | Optional|
-|msg\_id|[int](/API_docs/types/int.html) | Yes|
+|msg\_id|[int](/API_docs/types/int.html) | Optional|
 
 
 ### Return type: [payments.GiveawayInfo](/API_docs/types/payments.GiveawayInfo.html)
 
-### Can bots use this method: **YES**
+### Can bots use this method: **NO**
 
 
 ### MadelineProto Example ([now async for huge speed and parallelism!](https://docs.madelineproto.xyz/docs/ASYNC.html)):

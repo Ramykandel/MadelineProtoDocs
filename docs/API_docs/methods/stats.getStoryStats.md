@@ -17,12 +17,12 @@ redirect_from: /API_docs/methods/stats_getStoryStats.html
 |----------|---------------|----------|
 |dark|[Bool](/API_docs/types/Bool.html) | Optional|
 |peer|[Username, chat ID, Update, Message or InputPeer](/API_docs/types/InputPeer.html) | Optional|
-|id|[int](/API_docs/types/int.html) | Yes|
+|id|[int](/API_docs/types/int.html) | Optional|
 
 
 ### Return type: [stats.StoryStats](/API_docs/types/stats.StoryStats.html)
 
-### Can bots use this method: **YES**
+### Can bots use this method: **NO**
 
 
 ### MadelineProto Example ([now async for huge speed and parallelism!](https://docs.madelineproto.xyz/docs/ASYNC.html)):

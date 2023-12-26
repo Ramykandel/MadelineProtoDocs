@@ -16,14 +16,14 @@ redirect_from: /API_docs/methods/stats_getStoryPublicForwards.html
 | Name     |    Type       | Required |
 |----------|---------------|----------|
 |peer|[Username, chat ID, Update, Message or InputPeer](/API_docs/types/InputPeer.html) | Optional|
-|id|[int](/API_docs/types/int.html) | Yes|
-|offset|[string](/API_docs/types/string.html) | Yes|
-|limit|[int](/API_docs/types/int.html) | Yes|
+|id|[int](/API_docs/types/int.html) | Optional|
+|offset|[string](/API_docs/types/string.html) | Optional|
+|limit|[int](/API_docs/types/int.html) | Optional|
 
 
 ### Return type: [stats.PublicForwards](/API_docs/types/stats.PublicForwards.html)
 
-### Can bots use this method: **YES**
+### Can bots use this method: **NO**
 
 
 ### MadelineProto Example ([now async for huge speed and parallelism!](https://docs.madelineproto.xyz/docs/ASYNC.html)):

@@ -124,7 +124,6 @@ Main API wrapper for MadelineProto.
 * [`extractUpdates(array $updates): array[]`](#extractupdates-array-updates-array)
 * [`fileGetContents(string $url): string`](#filegetcontents-string-url-string)
 * [`flock(string $file, int $operation, float $polling = 0.1, ?\Amp\Cancellation $token = NULL, ?\Closure $failureCb = NULL): mixed`](#flock-string-file-int-operation-float-polling-0-1-amp-cancellation-token-null-closure-failurecb-null-mixed)
-* [`flush(): void`](#flush-void)
 * [`fullChatLastUpdated(mixed $id): int`](#fullchatlastupdated-mixed-id-int)
 * [`fullGetSelf(): array|false`](#fullgetself-array-false)
 * [`genVectorHash(array $longs): string`](#genvectorhash-array-longs-string)
@@ -142,14 +141,12 @@ Main API wrapper for MadelineProto.
 * [`getDNSClient(): \Amp\Dns\DnsResolver`](#getdnsclient-amp-dns-dnsresolver)
 * [`getDhConfig(): array`](#getdhconfig-array)
 * [`getDialogIds(): list<int>`](#getdialogids-list-int)
-* [`getDialogs(): list<array>`](#getdialogs-list-array)
 * [`getDownloadInfo(mixed $messageMedia): array{ext: string, name: string, mime: string, size: int, InputFileLocation: array, key_fingerprint?: string, key?: string, iv?: string, thumb_size?: string}`](#getdownloadinfo-mixed-messagemedia-array-ext-string-name-string-mime-string-size-int-inputfilelocation-array-key_fingerprint-string-key-string-iv-string-thumb_size-string)
 * [`getDownloadLink(\danog\MadelineProto\EventHandler\Message|\danog\MadelineProto\EventHandler\Media|array|string $media, ?string $scriptUrl = NULL, ?int $size = NULL, ?string $name = NULL, ?string $mime = NULL): string`](#getdownloadlink-danog-madelineproto-eventhandler-message-danog-madelineproto-eventhandler-media-array-string-media-string-scripturl-null-int-size-null-string-name-null-string-mime-null-string)
 * [`getEventHandler(class-string<\T>|null $class = NULL): \T|\danog\MadelineProto\Ipc\EventHandlerProxy|\__PHP_Incomplete_Class|null`](#geteventhandler-class-string-t-null-class-null-t-danog-madelineproto-ipc-eventhandlerproxy-__php_incomplete_class-null)
 * [`getExtensionFromLocation(mixed $location, string $default): string`](#getextensionfromlocation-mixed-location-string-default-string)
 * [`getExtensionFromMime(string $mime): string`](#getextensionfrommime-string-mime-string)
 * [`getFileInfo(mixed $constructor): array`](#getfileinfo-mixed-constructor-array)
-* [`getFolderId(mixed $id): ?int`](#getfolderid-mixed-id-int)
 * [`getFullDialogs(): array<int, array>`](#getfulldialogs-array-int-array)
 * [`getFullInfo(mixed $id): array`](#getfullinfo-mixed-id-array)
 * [`getHTTPClient(): \Amp\Http\Client\HttpClient`](#gethttpclient-amp-http-client-httpclient)
@@ -1001,12 +998,6 @@ Parameters:
 
 
 
-### `flush(): void`
-
-Flush all postponed messages.
-
-
-
 ### `fullChatLastUpdated(mixed $id): int`
 
 When was full info for this chat last cached.
@@ -1186,12 +1177,6 @@ Get dialog IDs.
 
 
 
-### `getDialogs(): list<array>`
-
-Get dialog peers.
-
-
-
 ### `getDownloadInfo(mixed $messageMedia): array{ext: string, name: string, mime: string, size: int, InputFileLocation: array, key_fingerprint?: string, key?: string, iv?: string, thumb_size?: string}`
 
 Get download info of file
@@ -1280,21 +1265,10 @@ Parameters:
 
 
 
-### `getFolderId(mixed $id): ?int`
-
-Get folder ID from object.
-
-
-Parameters:
-
-* `$id`: `mixed` Object  
-
-
-
 ### `getFullDialogs(): array<int, array>`
 
 Get full info of all dialogs.
-Bots should use getDialogs or getDialogIds, instead.
+Bots should use getDialogIds, instead.
 
 
 ### `getFullInfo(mixed $id): array`

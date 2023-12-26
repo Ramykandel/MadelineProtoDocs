@@ -152,6 +152,14 @@ class ZeusHandler extends EventHandler
 - Removed the long-deprecated `setEventHandler` and `$MadelineProto->startAndLoop` methods, you should use `MyEventHandler::startAndLoop`, instead.
 - Removed support for the deprecated onLoop method.
 
+Most importantly, the `EventHandler` class was deprecated, please use the `SimpleEventHandler` class now.  
+
+The `SimpleEventHandler` class still supports the legacy `onUpdatexxx` event handler methods, however starting from v8 **they are not covered by the backwards compatibility promise anymore**.  
+
+This means that the structure of updates received in `onUpdatexxx` event handler methods will change at any time, including in minor versions of MadelineProto v8: fields will be removed and changed with only a minor note will be added to the changelog.  
+
+The new [filter-based event API &raquo;](https://docs.madelineproto.xyz/docs/FILTERS.html) should be used instead of `onUpdatexxx` methods: it's much simpler to use, and **is** covered by the backwards compatibility promise, so its fields will **not** change or be removed in minor versions of MadelineProto v8.  
+
 
 ```php
 class MyEventHandler extends \danog\MadelineProto\EventHandler {
@@ -166,7 +174,7 @@ $API->startAndLoop(MyEventHandler::class);
 After:
 
 ```php
-class MyEventHandler extends \danog\MadelineProto\EventHandler {
+class MyEventHandler extends \danog\MadelineProto\SimpleEventHandler {
 
 }
 
@@ -199,6 +207,9 @@ $me = $API->getSelf();
 
 ## Full breaking changelog
 
+- [BC] REMOVED: the `getDialogs` method, please use the `getDialogIds` method, instead.
+- [BC] CHANGED: all `peerUser`, `peerChat`, `peerChannel` constructors were replaced with integer IDs.
+- [BC] REMOVED: internal `Input*` fields returned by `getInfo`
 - [BC] REMOVED: the long-deprecated `setEventHandler` method, you should use `MyEventHandler::startAndLoop`, instead.
 - [BC] REMOVED: the deprecated $MadelineProto->startAndLoop method. Please use MyEventHandler::startAndLoop instead, remove any new \danog\MadelineProto\API line you have in your code if you're using only the event handler.
 - [BC] REMOVED: support for the deprecated onLoop method.

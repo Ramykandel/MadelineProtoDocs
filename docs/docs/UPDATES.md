@@ -18,6 +18,8 @@ Update handling can be done in different ways:
   * [Plugins](https://docs.madelineproto.xyz/docs/PLUGINS.html)
   * [Cron](#cron)
   * [Persisting data and IPC](#persisting-data-and-ipc)
+  * [Built-in ORM](#built-in-orm)
+  * [IPC](#ipc)
   * [Restarting](#restarting)
   * [Self-restart on webhosts](#self-restart-on-webhosts)
   * [Multi-account](#multiaccount)
@@ -145,6 +147,7 @@ use danog\MadelineProto\EventHandler\Filter\FilterRegex;
 use danog\MadelineProto\EventHandler\Filter\FilterText;
 use danog\MadelineProto\EventHandler\Filter\FilterTextCaseInsensitive;
 use danog\MadelineProto\EventHandler\Message;
+use danog\MadelineProto\EventHandler\Message\ChannelMessage;
 use danog\MadelineProto\EventHandler\Message\Service\DialogPhotoChanged;
 use danog\MadelineProto\EventHandler\Plugin\RestartPlugin;
 use danog\MadelineProto\EventHandler\SimpleFilter\FromAdmin;
@@ -285,36 +288,18 @@ class MyEventHandler extends SimpleEventHandler
     }
 
     /**
-     * Downloads all telegram stories of a user (including protected ones).
-     *
-     * The bot must be started via web for this command to work.
-     *
-     * You can also start it via CLI but you'll have to specify a download script URL in the settings: https://docs.madelineproto.xyz/docs/FILES.html#getting-a-download-link-cli-bots.
+     * Automatically sends a comment to all new incoming channel posts.
      */
-    #[FilterCommand('dlStories')]
-    public function dlStoriesCommand(Message $message): void
+    #[Handler]
+    public function makeComment(Incoming&ChannelMessage $message): void
     {
-        if (!$message->commandArgs) {
-            $message->reply("You must specify the @username or the Telegram ID of a user to download their stories!");
+        if ($this->isSelfBot()) {
             return;
         }
-
-        $stories = $this->stories->getUserStories(user_id: $message->commandArgs[0])['stories']['stories'];
-        // Skip deleted stories
-        $stories = array_filter($stories, static fn (array $s): bool => $s['_'] === 'storyItem');
-        // Sort by date
-        usort($stories, static fn ($a, $b) => $a['date'] <=> $b['date']);
-
-        $result = "Total stories: ".count($stories)."\n\n";
-        foreach ($stories as $story) {
-            $cur = "- ID {$story['id']}, posted ".date(DATE_RFC850, $story['date']);
-            if (isset($story['caption'])) {
-                $cur .= ', "'.self::markdownEscape($story['caption']).'"';
-            }
-            $result .= "$cur; [click here to download »]({$this->getDownloadLink($story)})\n";
-        }
-
-        $message->reply($result, parseMode: ParseMode::MARKDOWN);
+        $message->getDiscussion()->reply(
+            message: "This comment is powered by [MadelineProto](https://t.me/MadelineProto)!",
+            parseMode: ParseMode::MARKDOWN
+        );
     }
 
     #[FilterCommand('broadcast')]
@@ -494,6 +479,9 @@ Here's a full list of the concrete object types on which bound methods and prope
 * [danog\MadelineProto\EventHandler\CallbackQuery &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/CallbackQuery.html) - Represents a query sent by the user by clicking on a button.
   * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/CallbackQuery.html#properties)
   * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/CallbackQuery.html#method-list)
+* [danog\MadelineProto\EventHandler\Channel\ChannelParticipant &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Channel/ChannelParticipant.html) - A participant has left, joined, was banned or admined in a [channel or supergroup](https://core.telegram.org/api/channel).
+  * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Channel/ChannelParticipant.html#properties)
+  * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Channel/ChannelParticipant.html#method-list)
 * [danog\MadelineProto\EventHandler\Channel\MessageForwards &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Channel/MessageForwards.html) - Indicates that the forward counter of a message in a channel has changed.
   * [Full property list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Channel/MessageForwards.html#properties)
   * [Full bound method list &raquo;](https://docs.madelineproto.xyz/PHP/danog/MadelineProto/EventHandler/Channel/MessageForwards.html#method-list)
@@ -894,9 +882,186 @@ include 'madeline.php';
 
 $a = new API('bot.madeline');
 
-$plugin = $a->getPlugin(PingPlugin::class);
+$handler = $a->getEventHandler(PingPlugin::class);
 
-$plugin->setPongText('UwU');
+$handler->setPongText('UwU');
+```
+
+#### Built-in ORM
+
+You can also directly connect to any database using the same [async MySQL/Postgres/Redis ORM](DATABASE.html) used by MadelineProto internally.  
+
+To do so, simply [specify the database settings](DATABASE.html), and declare a static `$dbProperties` property to initialize the async database mapper:  
+```php
+
+use danog\MadelineProto\Db\DbArray;
+use danog\MadelineProto\SimpleEventHandler;
+use danog\MadelineProto\Settings\Database\SerializerType;
+
+/**
+ * @psalm-import-type TOrmConfig from DbArray
+ */
+class MyEventHandler extends SimpleEventHandler {
+    /**
+     * List of properties automatically stored in database through the ORM (MySQL, Postgres, redis or session file).
+     * @see https://docs.madelineproto.xyz/docs/DATABASE.html
+     * @var array<string, TOrmConfig>
+     */
+    protected static array $dbProperties = [
+        'ormProperty' => [
+            // Fully optional settings array for the property, can be empty
+            
+            // Serialization method (one of the SerializerType constants).
+            // If absent, defaults to automatic.
+            //
+            // 'serializer' => SerializerType::*,
+
+            // Whether to enable the cache.
+            // If absent, defaults to true.
+            //
+            // 'enableCache' => true,
+
+            // If the cache is enabled, specifies the cache TTL in seconds.
+            // If absent, defaults to the cache TTL specified in the global settings
+            // 'cacheTtl' => 5*60, 
+
+            // Specifies the table name postfix. 
+            // Internally concatenated with the session prefix specified in the global settings,
+            //  or with the session ID if the session prefix is not specified in the global settings.
+            // Defaults to {$className}_{$propertyName}
+            // 
+            // 'table' => 'tableName'
+        ]
+    ];
+
+    /**
+     * @var DbArray<array-key, mixed>
+     * 
+     * This ORM property is also persisted to the database, and is *not* fully kept in RAM at all times.
+     * 
+     * You can also provide more specific type parameters (i.e. <string, int>; <int, someClass> etc)
+     */
+    protected DbArray $ormProperty;
+
+    /**
+     * This raw property is also persisted to the database, but is always kept in RAM at all times.
+     */
+    private array $rawProperty = [];
+
+    /**
+     * Returns a list of names for properties that will be automatically saved to the session database (MySQL/postgres/redis if configured, the session file otherwise).
+     */
+    public function __sleep(): array
+    {
+        return ['ormProperty', 'rawProperty'];
+    }
+    // ...
+}
+```
+
+And use the newly created `$dataStoredOnDb` property to access the database:  
+```php
+// Can be anything serializable, an array, an int, an object
+$myData = [];
+
+// Use the isset method to check whether some data exists in the database
+if (isset($this->dataStoredOnDb['yourKey'])) {
+    // Always when fetching data
+    $myData = $this->dataStoredOnDb['yourKey'];
+}
+$this->dataStoredOnDb['yourKey'] = $myData + ['moreStuff' => 'yay'];
+
+$this->dataStoredOnDb['otherKey'] = 0;
+unset($this->dataStoredOnDb['otherKey']);
+
+$this->logger("Count: ".count($this->dataStoredOnDb));
+
+foreach ($this->dataStoredOnDb as $key => $value) {
+    $this->logger($key);
+    $this->logger($value);
+}
+```
+
+[Psalm](https://psalm.dev) generic typing is supported.  
+
+Each element of the array is stored in a separate database row (MySQL, Postgres or Redis, configured as specified [here &raquo;](https://docs.madelineproto.xyz/docs/DATABASE.html)), and is only kept in memory for the number of seconds specified in the cache TTL setting; when the TTL of an element expires, it is individually flushed to the database (if its value was changed), and then the row is removed from RAM.  
+
+Pros of using ORM `DbArray` properties instead of raw properties:
+
+* Much lower RAM usage, as the entire array is **not** kept in RAM at all times, only the most frequently used elements, according to the configured TTL. 
+* Added possibility of storing even gigabytes of data in a single `DbArray`, without keeping it all in memory.  
+* If caching is disabled, the array is **never** kept in RAM, significantly hindering performance but further reducing RAM usage for truly **huge** elements (gigabyte-level).  
+
+Cons of using ORM `DbArray` properties:
+
+* Reads and writes are not atomic. Since each handler is started in a concurrent green thread (fiber), race conditions may ensue, thus accesses must be syncronized where and if needed using [amphp/sync](https://github.com/amphp/sync).  
+* Slower than raw properties (**much** slower if caching is fully disabled).
+
+Both raw properties and ORM `DbArray` properties are ultimately persisted on the database.  
+
+If no database is configured in the global settings, ORM properties behave pretty much like raw array properties, kept entirely in RAM and persisted to the session file.  
+
+### IPC
+
+You can communicate with the event handler from the outside, by invoking methods on the proxy returned by getEventHandler:
+
+bot.php:
+
+```php
+<?php declare(strict_types=1);
+
+use danog\MadelineProto\EventHandler\Attributes\Handler;
+use danog\MadelineProto\EventHandler\Message;
+use danog\MadelineProto\EventHandler\Plugin\RestartPlugin;
+use danog\MadelineProto\EventHandler\SimpleFilter\Incoming;
+use danog\MadelineProto\SimpleEventHandler;
+
+if (!file_exists('madeline.php')) {
+     copy('https://phar.madelineproto.xyz/madeline.php', 'madeline.php');
+}
+include 'madeline.php';
+
+final class MyEventHandler extends SimpleEventHandler {
+
+    public function someMethod(): string {
+        return "Some data";
+    }
+
+
+    /**
+     * Handle incoming updates from users, chats and channels.
+     */
+    #[Handler]
+    public function handleMessage(Incoming&Message $message): void
+    {
+        // Code that uses $message...
+        // See the following pages for more examples and documentation:
+        // - https://github.com/danog/MadelineProto/blob/v8/examples/bot.php
+        // - https://docs.madelineproto.xyz/docs/UPDATES.html
+        // - https://docs.madelineproto.xyz/docs/FILTERS.html
+        // - https://docs.madelineproto.xyz/
+    }
+}
+
+MyEventHandler::startAndLoop('bot.madeline');
+```
+
+
+script.php:
+
+```php
+use danog\MadelineProto\API;
+
+if (!file_exists('madeline.php')) {
+     copy('https://phar.madelineproto.xyz/madeline.php', 'madeline.php');
+}
+include 'madeline.php';
+
+$a = new API('bot.madeline');
+
+$handler = $a->getEventHandler(MyEventHandler::class);
+
+$handler->someMethod();
 ```
 
 ### Restarting
@@ -963,11 +1128,15 @@ API::startAndLoopMulti($MadelineProtos, MyEventHandler::class);
 
 This will create an event handler class `EventHandler`, create a **combined** MadelineProto session with session files `bot.madeline`, `user.madeline`, `user2.madeline`, and set the event handler class to our newly created event handler.
 
-Usage is the same as for [the normal event handler](#async-event-driven), with the difference is that multiple accounts can receive and handle updates in parallel, each with its own event handler instance.
+Usage is the same as for [the normal event handler](#async-event-driven), with the difference is that multiple accounts can receive and handle updates in parallel, each with its own event handler instance.  
 
-To dynamically start a new event handler in the background, use `Tools::callFork(MyEventHandler::startAndLoop(...), 'session.madeline', $settings))`.  
+Errors thrown inside of the event loop will be reported to the report peers specified by each separate instance.  
 
-**Warning**: this can only be done with already logged-in sessions, if your sessions aren't logged in yet use `startAndLoopMulti`.  
+Note that for performance reasons, some internal or connection exceptions not thrown from the EventHandler and exceptions thrown from `onStart` may still get reported (only to, or also to) the last started event handler.  
+
+To dynamically start a new event handler in the background, use `EventLoop::queue(MyEventHandler::startAndLoop(...), 'session.madeline', $settings))`.  
+
+**Warning**: this can only be done with already logged-in sessions, if your sessions aren't logged in yet use `startAndLoopMulti`, or login first.  
 
 ```php
 use danog\MadelineProto\EventHandler;
@@ -981,7 +1150,7 @@ foreach ([
     'user.madeline' => 'Userbot login',
     'user2.madeline' => 'Userbot login (2)'
 ] as $session => $message) {
-    Tools::callFork(MyEventHandler::startAndLoop(...), $session);
+    EventLoop::queue(MyEventHandler::startAndLoop(...), $session);
 }
 
 EventLoop::run(); // Or continue using some other async code...

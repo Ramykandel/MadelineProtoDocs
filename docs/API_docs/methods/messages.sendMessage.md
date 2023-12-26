@@ -26,7 +26,7 @@ Sends a message to a chat
 |invert\_media|[Bool](/API_docs/types/Bool.html) |  | Optional|
 |peer|[Username, chat ID, Update, Message or InputPeer](/API_docs/types/InputPeer.html) | The destination where the message will be sent | Optional|
 |reply\_to|[InputReplyTo](/API_docs/types/InputReplyTo.html) |  | Optional|
-|message|[string](/API_docs/types/string.html) | The message | Yes|
+|message|[string](/API_docs/types/string.html) | The message | Optional|
 |reply\_markup|[ReplyMarkup](/API_docs/types/ReplyMarkup.html) | Reply markup for sending bot buttons | Optional|
 |entities|Array of [MessageEntity](/API_docs/types/MessageEntity.html) | Message [entities](https://core.telegram.org/api/entities) for sending styled text | Optional|
 |parse\_mode| [string](/API_docs/types/string.html) | Whether to parse HTML or Markdown markup in the message| Optional |
@@ -71,7 +71,7 @@ If the length of the provided message is bigger than 4096, the message will be s
 
 Set parse_mode to html to enable HTML parsing of the message.  
 
-Set parse_mode to Markdown to enable markown AND html parsing of the message.  
+Set parse_mode to Markdown to enable markdown parsing of the message.  
 
 The following tags are currently supported:
 
